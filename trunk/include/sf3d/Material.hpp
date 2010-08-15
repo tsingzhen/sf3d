@@ -12,9 +12,18 @@ namespace sf3d
     class Material
     {
         public:
+            typedef enum
+            {
+                REFLECTION_NONE,
+                REFLECTION_MIRROR
+            }   ReflectiveMode;
+
             Material();
 
             sf::Color       ambientColor, diffuseColor, specularColor, emissiveColor;
+            ReflectiveMode  reflectiveMode;
+            bool            refractive;
+            bool            smooth;
 
             static Material&    Get(const sf::String& name);
 

@@ -9,7 +9,10 @@ namespace sf3d
         :   ambientColor(sf::Color(123, 123, 123)),
             diffuseColor(sf::Color(255, 255, 255)),
             specularColor(sf::Color(0, 0, 0)),
-            emissiveColor(sf::Color(0, 0, 0))
+            emissiveColor(sf::Color(0, 0, 0)),
+            reflectiveMode(REFLECTION_NONE),
+            refractive(false),
+            smooth(false)
     {
 
     }

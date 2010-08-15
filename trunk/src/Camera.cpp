@@ -8,7 +8,7 @@ namespace sf3d
 {
     Camera::Camera()
         :   myFOV(70),
-            myNearValue(0.1),
+            myNearValue(1),
             myFarValue(1000),
             myAspectRatio(4.f / 3.f),
             myTarget()
@@ -95,21 +95,18 @@ namespace sf3d
         return myTarget;
     }
 
-    void    Camera::Render()
+    void    Camera::Render(Node::RenderPass pass)
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 
         gluPerspective(myFOV, myAspectRatio, myNearValue, myFarValue);
 
-        gluLookAt(myPosition.x, myPosition.y, myPosition.z, myTarget.x, myTarget.y, myTarget.z, 0, 1, 0);
 
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        std::cout << myPosition.x << myPosition.y << myPosition.z << std::endl;
-        /*glTranslatef(myPosition.x, myPosition.y, myPosition.z);*/
         glRotatef(myRotation.x, 1, 0, 0);
         glRotatef(myRotation.y, 0, 1, 0);
         glRotatef(myRotation.z, 0, 0, 1);
+        glTranslatef(myPosition.x, myPosition.y, myPosition.z);
+
     }
 }

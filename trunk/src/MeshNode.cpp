@@ -3,6 +3,9 @@
 #include <sf3d/MeshBuffer.hpp>
 
 #include <sf3d/GL/glew.h>
+#include <sf3d/Material.hpp>
+
+#include <iostream>
 
 namespace sf3d
 {
@@ -12,8 +15,17 @@ namespace sf3d
     {
     }
 
+
+    MeshBuffer* MeshNode::GetMeshBuffer() const
+    {
+        return myMeshBuffer;
+    }
+
     void    MeshNode::Render(Node::RenderPass pass)
     {
+        if (!HandlePass(pass))
+            return;
+
         if (!myMeshBuffer)
             return;
 
@@ -21,8 +33,8 @@ namespace sf3d
 
         ApplyTransform();
         ApplyMaterial();
-
-        myMeshBuffer->Update();
+        ApplyTexture();
+        ApplyProgram();
 
         glEnableClientState(GL_VERTEX_ARRAY);
         myMeshBuffer->Use(MeshBuffer::VERTEX_BUFFER);
@@ -48,26 +60,11 @@ namespace sf3d
         glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-/*
-        // immediat mode
-        glBegin(GL_TRIANGLES);
-        const MeshBuffer::Triangles& triangles = myMeshBuffer->GetTriangles();
-        const MeshBuffer::Vertices& vertices = myMeshBuffer->GetVertices();
-        for (MeshBuffer::Triangles::const_iterator it = triangles.begin(); it != triangles.end(); ++it)
-        {
-            const MeshBuffer::Triangle& triangle = *it;
-            for (sf::Uint8 i = 0; i < 3; ++i)
-            {
-                const MeshBuffer::Vertex& v = vertices[triangle.vIndex[i]];
-                glNormal3f(v.normal.x, v.normal.y, v.normal.z);
-                glVertex3f(v.pos.x, v.pos.y, v.pos.z);
-            }
-        }
-        glEnd();
-*/
-
         RenderChildren(pass);
+
+        Program::Deactivate();
 
         glPopMatrix();
     }
+
 }

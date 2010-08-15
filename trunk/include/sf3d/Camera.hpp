@@ -35,7 +35,7 @@ namespace sf3d
             void                SetFarValue(float farValue);
             float               GetFarValue() const;
 
-            virtual void        Render();
+            virtual void        Render(Node::RenderPass pass);
 
         private:
             float               myFOV;

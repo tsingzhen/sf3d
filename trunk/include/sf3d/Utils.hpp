@@ -1,12 +1,25 @@
 #ifndef SF3D_UTILS_HPP
 #define SF3D_UTILS_HPP
 
+#include <SFML/System/Vector2.hpp>
+#include <SFML/System/Vector3.hpp>
 #include <SFML/System/String.hpp>
+
 #include <sstream>
 #include <cmath>
 
+#include <iostream>
+#include <sf3d/GL/glew.h>
+
+namespace sf
+{
+    typedef Vector2<Uint32> Vector2ui;
+}
+
 namespace sf3d
 {
+    const float pi = 3.141592654f;
+
     class Utils
     {
         public:
@@ -55,6 +68,31 @@ namespace sf3d
                 v.y = vect.y / length;
                 v.z = vect.z / length;
                 return v;
+            }
+
+            static bool CheckGLError(const sf::String& func)
+            {
+                GLuint status = glGetError();
+                if (status == GL_NO_ERROR)
+                {
+                    std::cout << "No error in " << func.ToAnsiString() << std::endl;
+                    return true;
+                }
+                else if (status == GL_INVALID_ENUM)
+                    std::cerr << "GL_invalid_enum";
+                else if (status == GL_INVALID_VALUE)
+                    std::cerr << "GL_invalid_value";
+                else if (status == GL_INVALID_OPERATION)
+                    std::cerr << "GL_invalid_operation";
+                else if (status == GL_STACK_OVERFLOW)
+                    std::cerr << "GL_stack_overflow";
+                else if (status == GL_STACK_UNDERFLOW)
+                    std::cerr << "GL_stack_underflow";
+                else if (status == GL_OUT_OF_MEMORY)
+                    std::cerr << "GL_out_of_memory";
+
+                std::cerr << "in func " << func.ToAnsiString() << std::endl;
+                return false;
             }
 
         protected:

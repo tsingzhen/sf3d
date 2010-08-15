@@ -28,6 +28,7 @@ namespace sf3d
         MeshBuffer* mb = new MeshBuffer();
         MeshBuffer::Vertices& vertices = mb->GetVertices();
         MeshBuffer::Triangles& triangles = mb->GetTriangles();
+        MeshBuffer::Normals& normals = mb->GetNormals();
 
         std::string line;
         while (std::getline(file, line))
@@ -47,6 +48,12 @@ namespace sf3d
                             vertices.push_back(v);
                         }
                         break;
+
+                        case 'n':
+                        {
+                            const sf::Vector3f& normal = GetVectorFromLine(line);
+                            normals.push_back(normal);
+                        }
                     };
                 }
                 break;
@@ -91,7 +98,7 @@ namespace sf3d
         MeshBuffer::Triangle t;
 
         typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-        boost::char_separator<char> sep(" "), sep2("/");
+        boost::char_separator<char> sep(" "), sep2("/", "", boost::keep_empty_tokens);
         tokenizer token1(line, sep);
 
         // Get all elements as string
@@ -99,10 +106,26 @@ namespace sf3d
         for (tokenizer::iterator it1 = token1.begin(); it1 != token1.end(); ++it1)
         {
             const std::string& element = *it1;
+
             if (i != 0)
             {
                 tokenizer token2(element, sep2);
-                t.vIndex[i - 1] = Utils::GetFromString<sf::Uint32>(*(token2.begin()), 0) - 1;
+                tokenizer::iterator it2 = token2.begin();
+
+                t.vIndex[i - 1] = Utils::GetFromString<sf::Uint32>(*it2, 0) - 1; ++it2;
+                if (it2 != token2.end())
+                {
+                    //std
+                    ++it2;
+                }
+
+                if (it2 != token2.end())
+                {
+                    sf::Uint32 nIndex = Utils::GetFromString<sf::Uint32>(*it2, 0) - 1;
+                    t.normalIndex[i - 1] = nIndex;
+                }
+
+
             }
             ++i;
         }
