@@ -19,8 +19,9 @@ namespace sf3d
             myRotation(),
             myScale(sf::Vector3f(1, 1, 1)),
             myParent(0),
-            myMaterial("DefaultNode"),
-            myTexture()
+            myMaterial("Node"),
+            myTexture(),
+            myProgram()
     {
 
     }
@@ -89,6 +90,22 @@ namespace sf3d
     {
         return myTexture;
     }
+
+    void    Node::SetProgram(const Program& program)
+    {
+        myProgram = program;
+    }
+
+    Program&    Node::GetProgram()
+    {
+        return myProgram;
+    }
+
+    void    Node::ApplyProgram()
+    {
+        Program::Use(myProgram);
+    }
+
 
     void    Node::ApplyTexture()
     {
@@ -178,6 +195,11 @@ namespace sf3d
         glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
         glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
+
+        if (mat.smooth)
+            glShadeModel(GL_SMOOTH);
+        else
+            glShadeModel(GL_FLAT);
     }
 
     void    Node::ApplyLighting(Lights& lights)
@@ -197,7 +219,7 @@ namespace sf3d
 
             glEnable(GL_LIGHT0 + i);
 
-            const Material& mat = Material::Get(myMaterial);
+            const Material& mat = Material::Get(l->GetMaterial());
 
             GLfloat ambient[] = { static_cast<GLfloat>(mat.ambientColor.r) / 255.f,
                                   static_cast<GLfloat>(mat.ambientColor.g) / 255.f,
@@ -215,7 +237,7 @@ namespace sf3d
                                    static_cast<GLfloat>(mat.specularColor.a) / 255.f };
 
             const sf::Vector3f& pos = l->GetPosition();
-            GLfloat position[] = { pos.x, pos.y, pos.z, 1.f };
+            GLfloat position[] = { pos.x, pos.y, pos.z, 0.f };
 
             glLightfv(GL_LIGHT0 + i, GL_AMBIENT, ambient);
             glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, diffuse);
@@ -228,6 +250,25 @@ namespace sf3d
                 glVertex3f(0, 0, 0);
             glEnd();
         }
+    }
+
+    bool    Node::HandlePass(RenderPass pass)
+    {
+        Material& mat = Material::Get(myMaterial);
+
+        // Draw all reflective nodes using the stencil buffer
+        if (pass == PASS_REFLECTION_1)
+            return mat.reflectiveMode == Material::REFLECTION_MIRROR;
+
+        // Don't draw reflective nodes
+        if (pass == PASS_REFLECTION_2 && mat.reflectiveMode == Material::REFLECTION_MIRROR)
+            return false;
+
+
+        if (pass == PASS_NON_REFRACTIVE && mat.refractive == true)
+            return false;
+
+        return true;
     }
 
 }

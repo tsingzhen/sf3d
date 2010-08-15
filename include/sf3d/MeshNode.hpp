@@ -12,6 +12,8 @@ namespace sf3d
         public:
             MeshNode(MeshBuffer* meshBuffer);
 
+            MeshBuffer*     GetMeshBuffer() const;
+
             virtual void    Render(Node::RenderPass pass);
 
         private:

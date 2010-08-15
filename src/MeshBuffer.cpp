@@ -23,6 +23,11 @@ namespace sf3d
         glDeleteBuffers(1, &myIndexBufferID);
     }
 
+    void    MeshBuffer::SetVertices(const Vertices& vertices)
+    {
+        myVertices = vertices;
+    }
+
     MeshBuffer::Triangles&  MeshBuffer::GetTriangles()
     {
         return myTriangles;
@@ -31,6 +36,11 @@ namespace sf3d
     MeshBuffer::Vertices&   MeshBuffer::GetVertices()
     {
         return myVertices;
+    }
+
+    MeshBuffer::Normals&    MeshBuffer::GetNormals()
+    {
+        return myNormals;
     }
 
     void    MeshBuffer::Use(BufferType type)
@@ -50,7 +60,7 @@ namespace sf3d
         return;
     }
 
-    void    MeshBuffer::Update()
+    void    MeshBuffer::Update()//bool smooth)
     {
         sf::Uint32 vertexSize = myVertices.size(), indexSize = myTriangles.size() * 3;
         sf::Uint32 v = 0, n = 0, t = 0, c = 0, i = 0;
@@ -92,6 +102,7 @@ namespace sf3d
             indexes[i + 0] = triangle.vIndex[0];
             indexes[i + 1] = triangle.vIndex[1];
             indexes[i + 2] = triangle.vIndex[2];
+
             i += 3;
         }
 

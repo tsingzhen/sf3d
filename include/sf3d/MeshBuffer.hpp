@@ -27,6 +27,7 @@ namespace sf3d
             {
                 sf::Uint32      vIndex[3];
                 sf::Vector3f    normal;
+                sf::Uint32      normalIndex[3];
             }   Triangle;
 
             typedef enum
@@ -39,30 +40,35 @@ namespace sf3d
                 INDEX_BUFFER
             }   BufferType;
 
-            typedef std::vector<Triangle>   Triangles;
-            typedef std::vector<Vertex>     Vertices;
+            typedef std::vector<Triangle>       Triangles;
+            typedef std::vector<Vertex>         Vertices;
+            typedef std::vector<sf::Vector3f>   Normals;
 
             MeshBuffer();
             ~MeshBuffer();
 
-            Triangles&  GetTriangles();
-            Vertices&   GetVertices();
+            void            SetVertices(const Vertices& vertices);
 
-            void        Allocate();
-            void        Update();
-            void        ComputeNormals();
+            Triangles&      GetTriangles();
+            Vertices&       GetVertices();
+            Normals&        GetNormals();
 
-            void        Use(BufferType type);
+            void            Allocate();
+            void            Update();
+            void            ComputeNormals();
+
+            void            Use(BufferType type);
 
         private:
-            Triangles   myTriangles;
-            Vertices    myVertices;
+            Triangles       myTriangles;
+            Vertices        myVertices;
+            Normals         myNormals;
 
-            GLuint       myVertexBufferID;
-            GLuint       myNormalBufferID;
-            GLuint       myColorBufferID;
-            GLuint       myTextureBufferID;
-            GLuint       myIndexBufferID;
+            GLuint          myVertexBufferID;
+            GLuint          myNormalBufferID;
+            GLuint          myColorBufferID;
+            GLuint          myTextureBufferID;
+            GLuint          myIndexBufferID;
     };
 
     typedef std::vector<MeshBuffer*>    MeshBuffers;

@@ -1,7 +1,7 @@
 
 #include <sf3d/AnimatedMeshNode.hpp>
 
-#include <iostream>
+#include <sf3d/Material.hpp>
 
 namespace sf3d
 {
@@ -69,6 +69,9 @@ namespace sf3d
 
     void    AnimatedMeshNode::Render(Node::RenderPass pass)
     {
+        if (!HandlePass(pass))
+            return;
+
         UpdateAnim();
 
         if (myMeshBuffers->size() == 0)
@@ -82,13 +85,15 @@ namespace sf3d
         glPushMatrix();
 
         ApplyTransform();
-        ApplyMaterial();
         ApplyTexture();
-
+        ApplyProgram();
 
         glEnableClientState(GL_VERTEX_ARRAY);
         mb->Use(MeshBuffer::VERTEX_BUFFER);
         glVertexPointer(3, GL_FLOAT, 0, 0);
+
+
+        ApplyMaterial();
 
         glEnableClientState(GL_NORMAL_ARRAY);
         mb->Use(MeshBuffer::NORMAL_BUFFER);
@@ -112,22 +117,6 @@ namespace sf3d
 
         glDisable(GL_TEXTURE_2D);
 
-/*
-        // immediat mode
-        glBegin(GL_TRIANGLES);
-        const MeshBuffer::Triangles& triangles = mb->GetTriangles();
-        const MeshBuffer::Vertices& vertices = mb->GetVertices();
-        for (MeshBuffer::Triangles::const_iterator it = triangles.begin(); it != triangles.end(); ++it)
-        {
-            const MeshBuffer::Triangle& triangle = *it;
-            for (sf::Uint8 i = 0; i < 3; ++i)
-            {
-                const MeshBuffer::Vertex& v = vertices[triangle.vIndex[i]];
-                glVertex3f(v.pos.x, v.pos.y, v.pos.z);
-            }
-        }
-        glEnd();
-*/
         RenderChildren(pass);
 
         glPopMatrix();

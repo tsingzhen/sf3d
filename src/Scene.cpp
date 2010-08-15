@@ -1,16 +1,20 @@
 
 #include <sf3d/Scene.hpp>
 
+#include <sf3d/Renderer.hpp>
 #include <sf3d/GL/glew.h>
+#include <iostream>
+
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/RenderImage.hpp>
 
 namespace sf3d
 {
-    Scene::Scene()
+    Scene::Scene(Camera& camera)
         :   Node("Scene"),
-            myCamera(),
+            myCamera(camera),
             myShowBasis(false)
     {
-
     }
 
     void    Scene::ShowBasis(bool show)
@@ -18,7 +22,7 @@ namespace sf3d
         myShowBasis = show;
     }
 
-    void    Scene::SetCamera(const Camera& camera)
+    void    Scene::SetCamera(Camera& camera)
     {
         myCamera = camera;
     }
@@ -30,42 +34,98 @@ namespace sf3d
 
     void    Scene::Render(Node::RenderPass pass)
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glEnable(GL_DEPTH_TEST);
+        Nodes& nodes = (pass == PASS_MULTITEXTURING ? myLastNodes : GetChildren());
 
         ApplyTransform();
-        myCamera.Render();
 
-        if (myShowBasis)
+        myCamera.Render(pass);
+
+        // Draw with stencil buffer
+        if (pass == Node::PASS_REFLECTION_1)
         {
-            glBegin(GL_LINES);
-                glColor3ub(255, 0, 0);
-                glVertex3f(0, 0, 0);
-                glVertex3f(1, 0, 0);
+            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+            glDepthMask(GL_FALSE);
 
-                glColor3ub(0, 255, 0);
-                glVertex3f(0, 0, 0);
-                glVertex3f(0, 1, 0);
+            glEnable(GL_STENCIL_TEST);
 
-                glColor3ub(0, 0, 255);
-                glVertex3f(0, 0, 0);
-                glVertex3f(0, 0, 1);
-            glEnd();
+            glStencilFunc(GL_ALWAYS, 1, 1);
+            glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        }
+        else if (pass == Node::PASS_REFLECTION_2)
+        {
+            glEnable(GL_DEPTH_TEST);
+
+            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+            glDepthMask(GL_TRUE);
+
+            glEnable(GL_STENCIL_TEST);
+            glStencilFunc(GL_EQUAL, 1, 1);
+            glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+            glEnable(GL_LIGHTING);
+            glScalef(1, -1, 1);
+        }
+        else if (pass == Node::PASS_SOLID)
+        {
+            glDisable(GL_STENCIL_TEST);
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            if (myShowBasis)
+            {
+                glBegin(GL_LINES);
+                    glColor3ub(255, 0, 0);
+                    glVertex3f(0, 0, 0);
+                    glVertex3f(1, 0, 0);
+
+                    glColor3ub(0, 255, 0);
+                    glVertex3f(0, 0, 0);
+                    glVertex3f(0, 1, 0);
+
+                    glColor3ub(0, 0, 255);
+                    glVertex3f(0, 0, 0);
+                    glVertex3f(0, 0, 1);
+                glEnd();
+            }
+
+
+            glEnable(GL_LIGHTING);
         }
 
-        glEnable(GL_LIGHTING);
-
-        Nodes& nodes = GetChildren();
-        for (Nodes::iterator it = nodes.begin(); it != nodes.end(); ++it)
+        if (pass == PASS_MULTITEXTURING)
         {
-            Node* n = *it;
-            n->ApplyLighting(myLights);
-            n->Render(pass);
+            for (Nodes::iterator it = myLastNodes.begin(); it != myLastNodes.end(); ++it)
+            {
+                Node* n = *it;
+
+                glMatrixMode(GL_MODELVIEW);
+                glLoadIdentity();
+
+                n->ApplyLighting(myLights);
+                n->Render(pass);
+            }
+        }
+        else
+        {
+            for (Nodes::iterator it = nodes.begin(); it != nodes.end(); ++it)
+            {
+                Node* n = *it;
+
+                glMatrixMode(GL_MODELVIEW);
+                glLoadIdentity();
+
+                n->ApplyLighting(myLights);
+                n->Render(pass);
+            }
         }
 
-        glDisable(GL_LIGHTING);
 
+    }
+
+    void    Scene::AddWater(WaterNode& water)
+    {
+        myLastNodes.push_back(&water);
     }
 
     void    Scene::AddLight(Light* light)

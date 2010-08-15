@@ -5,8 +5,10 @@
 #include <SFML/System/Vector3.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 
 #include <sf3d/Light.hpp>
+#include <sf3d/Shader.hpp>
 
 namespace sf3d
 {
@@ -18,8 +20,14 @@ namespace sf3d
         public:
             typedef enum
             {
-                PASS_REFLECTION = 0,
-                PASS_NO_SHADOW,
+                PASS_REFLECTION_1 = 0,
+                PASS_REFLECTION_2,
+                PASS_NON_REFRACTIVE,
+                PASS_SOLID,
+
+                PASS_MULTITEXTURING,
+
+                PASS_COUNT
             }   RenderPass;
 
 
@@ -46,6 +54,9 @@ namespace sf3d
             void                SetTexture(const sf::Image& image);
             sf::Image&          GetTexture();
 
+            void                SetProgram(const Program& program);
+            Program&            GetProgram();
+
             void                Add(Node* node);
             void                Remove(Node* node);
 
@@ -62,6 +73,9 @@ namespace sf3d
             void                ApplyTransform();
             void                ApplyMaterial();
             void                ApplyTexture();
+            void                ApplyProgram();
+
+            bool                HandlePass(RenderPass pass);
 
             void                RenderChildren(RenderPass pass);
 
@@ -84,6 +98,7 @@ namespace sf3d
             // Materials
             sf::String          myMaterial;
             sf::Image           myTexture;
+            Program             myProgram;
     };
 
 }
