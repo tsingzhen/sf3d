@@ -71,56 +71,41 @@ namespace sf3d
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_LIGHTING);
+            glEnable(GL_CULL_FACE);
 
             if (myShowBasis)
             {
                 glBegin(GL_LINES);
                     glColor3ub(255, 0, 0);
                     glVertex3f(0, 0, 0);
-                    glVertex3f(1, 0, 0);
+                    glVertex3f(10, 0, 0);
 
                     glColor3ub(0, 255, 0);
                     glVertex3f(0, 0, 0);
-                    glVertex3f(0, 1, 0);
+                    glVertex3f(0, 10, 0);
 
                     glColor3ub(0, 0, 255);
                     glVertex3f(0, 0, 0);
-                    glVertex3f(0, 0, 1);
+                    glVertex3f(0, 0, 10);
                 glEnd();
             }
 
 
-            glEnable(GL_LIGHTING);
+
         }
 
-        if (pass == PASS_MULTITEXTURING)
+
+        for (Nodes::iterator it = nodes.begin(); it != nodes.end(); ++it)
         {
-            for (Nodes::iterator it = myLastNodes.begin(); it != myLastNodes.end(); ++it)
-            {
-                Node* n = *it;
+            Node* n = *it;
 
-                glMatrixMode(GL_MODELVIEW);
-                glLoadIdentity();
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
 
-                n->ApplyLighting(myLights);
-                n->Render(pass);
-            }
+            n->ApplyLighting(myLights);
+            n->Render(pass);
         }
-        else
-        {
-            for (Nodes::iterator it = nodes.begin(); it != nodes.end(); ++it)
-            {
-                Node* n = *it;
-
-                glMatrixMode(GL_MODELVIEW);
-                glLoadIdentity();
-
-                n->ApplyLighting(myLights);
-                n->Render(pass);
-            }
-        }
-
-
     }
 
     void    Scene::AddWater(WaterNode& water)

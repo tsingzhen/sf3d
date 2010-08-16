@@ -1,6 +1,5 @@
 
 #include <sf3d/TerrainNode.hpp>
-
 #include <sf3d/MeshBuffer.hpp>
 
 namespace sf3d
@@ -13,14 +12,12 @@ namespace sf3d
         mySize.x = heightMap.GetWidth();
         mySize.y = heightMap.GetHeight();
 
-        myRenderList = glGenLists(1);
-
         Compute();
     }
 
     TerrainNode::~TerrainNode()
     {
-        glDeleteLists(myRenderList, 1);
+
     }
 
     void    TerrainNode::SetPrecision(sf::Uint32 precision)
@@ -38,49 +35,49 @@ namespace sf3d
         return static_cast<float>(myHeightMap.GetPixel(pointX, pointY).r);
     }
 
-    sf::Uint32  TerrainNode::GetIndexFromPoint(sf::Uint32 pointX, sf::Uint32 pointY)
-    {
-        return pointY * mySize.y + pointX;
-    }
-
     void    TerrainNode::Compute()
     {
         MeshBuffer* mb = GetMeshBuffer();
-        MeshBuffer::Vertices vertices;
+
+        MeshBuffer::Vertices& vertices = mb->GetVertices();
+        MeshBuffer::Triangles& triangles = mb->GetTriangles();
         MeshBuffer::Vertex v;
         MeshBuffer::Triangle t;
 
-        sf::Uint32 offset = 0;
-        for (sf::Uint32 y = 0; y < mySize.y; y += myPrecision)
+        float offset = 0;
+        sf::Uint32 x, y;
+        for (y = 0; y < mySize.y; y += myPrecision)
         {
-            for (sf::Uint32 x = 0; x < mySize.x; x += myPrecision)
+            for (x = 0; x < mySize.x; x += myPrecision)
             {
                 v.pos = sf::Vector3f(x, GetPointHeight(x, y), y);
+                v.color = sf::Color(255, 255, 255);
                 v.texCoord = sf::Vector2f(static_cast<float>(x) / mySize.x, static_cast<float>(y) / mySize.y);
                 vertices.push_back(v);
             }
         }
+        offset = std::ceil(static_cast<float>(mySize.y) / static_cast<float>(myPrecision));
 
-
-        for (sf::Uint32 y = 0; y < mySize.y - myPrecision; y += myPrecision)
+        sf::Uint32 i = 0;
+        for (y = 0; y < mySize.y; y += myPrecision)
         {
-            for (sf::Uint32 x = 0; x < mySize.x - myPrecision; x += myPrecision)
+            for (x = 0; x < mySize.x; x += myPrecision)
             {
-                t.vIndex[0] = GetIndexFromPoint(x, y);
-                t.vIndex[1] = GetIndexFromPoint(x, y + 1);
-                t.vIndex[2] = GetIndexFromPoint(x + 1, y + 1);
-                mb->GetTriangles().push_back(t);
+                if (x < mySize.x - myPrecision && y < mySize.y - myPrecision)
+                {
+                    t.vIndex[0] = i;
+                    t.vIndex[1] = i + 1 + offset;
+                    t.vIndex[2] = i + 1;
+                    triangles.push_back(t);
 
-                t.vIndex[0] = GetIndexFromPoint(x, y);
-                t.vIndex[1] = GetIndexFromPoint(x + 1, y + 1);
-                t.vIndex[2] = GetIndexFromPoint(x + 1, y);
-                mb->GetTriangles().push_back(t);
-
+                    t.vIndex[0] = i;
+                    t.vIndex[1] = i + offset;
+                    t.vIndex[2] = i + offset + 1;
+                    triangles.push_back(t);
+                }
+                ++i;
             }
         }
-
-        mb->SetVertices(vertices);
-
         mb->Allocate();
     }
 

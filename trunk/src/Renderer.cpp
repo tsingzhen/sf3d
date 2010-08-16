@@ -101,9 +101,9 @@ namespace sf3d
         RenderBuffer::Use(myFrameBuffer);
         const sf::Vector2ui winSize(myWindow->GetWidth(), myWindow->GetHeight());
 
-        glEnable(GL_CULL_FACE);
-
+//
         myFrameBuffer->Attach(myTextures[2]);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         myScene->Render(Node::PASS_SOLID);
 
@@ -123,6 +123,8 @@ namespace sf3d
         myTextures[2].Render();
 
         myWindow->SaveGLStates();
+
+
     }
 
     void    Renderer::SetProgram(const Program& program)
