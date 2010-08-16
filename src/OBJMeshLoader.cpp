@@ -28,7 +28,6 @@ namespace sf3d
         MeshBuffer* mb = new MeshBuffer();
         MeshBuffer::Vertices& vertices = mb->GetVertices();
         MeshBuffer::Triangles& triangles = mb->GetTriangles();
-        MeshBuffer::Normals& normals = mb->GetNormals();
 
         std::string line;
         while (std::getline(file, line))
@@ -48,12 +47,6 @@ namespace sf3d
                             vertices.push_back(v);
                         }
                         break;
-
-                        case 'n':
-                        {
-                            const sf::Vector3f& normal = GetVectorFromLine(line);
-                            normals.push_back(normal);
-                        }
                     };
                 }
                 break;
@@ -107,12 +100,14 @@ namespace sf3d
         {
             const std::string& element = *it1;
 
+
             if (i != 0)
             {
                 tokenizer token2(element, sep2);
                 tokenizer::iterator it2 = token2.begin();
 
                 t.vIndex[i - 1] = Utils::GetFromString<sf::Uint32>(*it2, 0) - 1; ++it2;
+
                 if (it2 != token2.end())
                 {
                     //std
@@ -124,8 +119,6 @@ namespace sf3d
                     sf::Uint32 nIndex = Utils::GetFromString<sf::Uint32>(*it2, 0) - 1;
                     t.normalIndex[i - 1] = nIndex;
                 }
-
-
             }
             ++i;
         }

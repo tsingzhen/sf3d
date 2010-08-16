@@ -19,12 +19,10 @@ namespace sf3d
 
         private:
             float           GetPointHeight(sf::Uint32 pointX, sf::Uint32 pointY);
-            sf::Uint32      GetIndexFromPoint(sf::Uint32 pointX, sf::Uint32 pointY);
 
             sf::Image       myHeightMap;
             sf::Vector2ui   mySize;
             sf::Uint32      myPrecision;
-            GLuint          myRenderList;
     };
 }
 

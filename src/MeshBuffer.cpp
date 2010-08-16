@@ -53,14 +53,14 @@ namespace sf3d
             glBindBuffer(GL_ARRAY_BUFFER, myNormalBufferID);
         else if (type == TEXTURE_BUFFER)
             glBindBuffer(GL_ARRAY_BUFFER, myTextureBufferID);
-        else if (type == COLOR_BUFFER)
+        else if (type == INDEX_BUFFER)
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, myIndexBufferID);
         else
             glBindBuffer(GL_ARRAY_BUFFER, 0);
         return;
     }
 
-    void    MeshBuffer::Update()//bool smooth)
+    void    MeshBuffer::Update()
     {
         sf::Uint32 vertexSize = myVertices.size(), indexSize = myTriangles.size() * 3;
         sf::Uint32 v = 0, n = 0, t = 0, c = 0, i = 0;
@@ -119,7 +119,7 @@ namespace sf3d
         glBufferSubData(GL_ARRAY_BUFFER, 0, vertexSize * 2 * sizeof(float), texCoords);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, myIndexBufferID);
-        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexSize * sizeof(float), indexes);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexSize * sizeof(sf::Uint32), indexes);
 
 
         delete[] vertices;
