@@ -34,8 +34,8 @@ namespace sf3d
         matLight.specularColor = sf::Color(255, 255, 255);
 
         Material& matNode = Material::Get("Node");
-        matNode.ambientColor = sf::Color(255, 255, 255);
-        matNode.diffuseColor = sf::Color(123, 123, 123);
+        matNode.ambientColor = sf::Color(123, 123, 123);
+        matNode.diffuseColor = sf::Color(255, 255, 255);
         matNode.specularColor = sf::Color(0, 0, 0);
 
         Resize();
@@ -101,10 +101,10 @@ namespace sf3d
         RenderBuffer::Use(myFrameBuffer);
         const sf::Vector2ui winSize(myWindow->GetWidth(), myWindow->GetHeight());
 
-//
         myFrameBuffer->Attach(myTextures[2]);
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        myScene->Render(Node::PASS_REFLECTION_1);
+        myScene->Render(Node::PASS_REFLECTION_2);
         myScene->Render(Node::PASS_SOLID);
 
         RenderBuffer::Use(0);

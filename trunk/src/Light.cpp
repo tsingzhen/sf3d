@@ -6,7 +6,9 @@ namespace sf3d
 {
     Light::Light()
         :   myPosition(),
-            myMaterial("Light")
+            myAmbientColor(sf::Color(255, 255, 255)),
+            myDiffuseColor(sf::Color(255, 255, 255)),
+            mySpecularColor(sf::Color(0, 0, 0))
     {
 
     }
@@ -37,13 +39,33 @@ namespace sf3d
         myPosition += move;
     }
 
-    void    Light::SetMaterial(const sf::String& material)
+    void    Light::SetAmbientColor(const sf::Color& ambient)
     {
-        myMaterial = material;
+        myAmbientColor = ambient;
     }
 
-    const sf::String&   Light::GetMaterial() const
+    const sf::Color&    Light::GetAmbientColor() const
     {
-        return myMaterial;
+        return myAmbientColor;
+    }
+
+    void    Light::SetDiffuseColor(const sf::Color& diffuse)
+    {
+        myDiffuseColor = diffuse;
+    }
+
+    const sf::Color&    Light::GetDiffuseColor() const
+    {
+        return myDiffuseColor;
+    }
+
+    void    Light::SetSpecularColor(const sf::Color& specular)
+    {
+        mySpecularColor = specular;
+    }
+
+    const sf::Color&    Light::GetSpecularColor() const
+    {
+        return mySpecularColor;
     }
 }

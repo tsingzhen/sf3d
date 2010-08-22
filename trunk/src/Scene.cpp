@@ -8,9 +8,11 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderImage.hpp>
 
+#include <sf3d/Camera.hpp>
+
 namespace sf3d
 {
-    Scene::Scene(Camera& camera)
+    Scene::Scene(Camera* camera)
         :   Node("Scene"),
             myCamera(camera),
             myShowBasis(false)
@@ -22,12 +24,12 @@ namespace sf3d
         myShowBasis = show;
     }
 
-    void    Scene::SetCamera(Camera& camera)
+    void    Scene::SetCamera(Camera* camera)
     {
         myCamera = camera;
     }
 
-    Camera& Scene::GetCamera()
+    Camera* Scene::GetCamera() const
     {
         return myCamera;
     }
@@ -38,7 +40,10 @@ namespace sf3d
 
         ApplyTransform();
 
-        myCamera.Render(pass);
+        if (!myCamera)
+            return;
+
+        myCamera->Render(pass);
 
         // Draw with stencil buffer
         if (pass == Node::PASS_REFLECTION_1)
@@ -69,30 +74,40 @@ namespace sf3d
         {
             glDisable(GL_STENCIL_TEST);
             glEnable(GL_DEPTH_TEST);
+
+            /*
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_LIGHTING);
-            glEnable(GL_CULL_FACE);
+*/
+
+/*
+            GLfloat fogColor[] = {0.5, 0.5, 0.5};
+            glEnable(GL_FOG);
+            glFogi(GL_FOG_MODE, GL_LINEAR);
+            glFogfv(GL_FOG_COLOR, fogColor);
+            glFogf(GL_FOG_DENSITY, 0.3);
+            glFogf(GL_FOG_START, 10);
+            glFogf(GL_FOG_END, 200);
+*/
 
             if (myShowBasis)
             {
                 glBegin(GL_LINES);
                     glColor3ub(255, 0, 0);
                     glVertex3f(0, 0, 0);
-                    glVertex3f(10, 0, 0);
+                    glVertex3f(1, 0, 0);
 
                     glColor3ub(0, 255, 0);
                     glVertex3f(0, 0, 0);
-                    glVertex3f(0, 10, 0);
+                    glVertex3f(0, 1, 0);
 
                     glColor3ub(0, 0, 255);
                     glVertex3f(0, 0, 0);
-                    glVertex3f(0, 0, 10);
+                    glVertex3f(0, 0, 1);
                 glEnd();
             }
 
-
-
+            glEnable(GL_LIGHTING);
         }
 
 
@@ -100,8 +115,7 @@ namespace sf3d
         {
             Node* n = *it;
 
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
+            ApplyProgram();
 
             n->ApplyLighting(myLights);
             n->Render(pass);

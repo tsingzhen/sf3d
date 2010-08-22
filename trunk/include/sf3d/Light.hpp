@@ -3,6 +3,7 @@
 
 #include <SFML/System/String.hpp>
 #include <SFML/System/Vector3.hpp>
+#include <SFML/Graphics/Color.hpp>
 
 #include <vector>
 
@@ -18,8 +19,14 @@ namespace sf3d
 
             void                Move(const sf::Vector3f& move);
 
-            void                SetMaterial(const sf::String& material);
-            const sf::String&   GetMaterial() const;
+            void                SetAmbientColor(const sf::Color& ambient);
+            const sf::Color&    GetAmbientColor() const;
+
+            void                SetDiffuseColor(const sf::Color& diffuse);
+            const sf::Color&    GetDiffuseColor() const;
+
+            void                SetSpecularColor(const sf::Color& specular);
+            const sf::Color&    GetSpecularColor() const;
 
             void                ComputeBrightness(const sf::Vector3f& position);
             float               GetBrightness() const;
@@ -28,9 +35,9 @@ namespace sf3d
 
         private:
             sf::Vector3f        myPosition;
-            sf::String          myMaterial;
-
             float               myBrightness;
+
+            sf::Color           myAmbientColor, myDiffuseColor, mySpecularColor;
 
     };
 

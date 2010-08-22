@@ -3,6 +3,8 @@
 
 #include <sf3d/Camera.hpp>
 
+#include <SFML/System/Clock.hpp>
+
 namespace sf3d
 {
     class FpsCamera : public Camera
@@ -21,6 +23,7 @@ namespace sf3d
             virtual void    Render(Node::RenderPass pass);
 
         private:
+            sf::Clock   myClock;
 
     };
 }

@@ -81,4 +81,13 @@ namespace sf3d
         mb->Allocate();
     }
 
+    void    TerrainNode::Render(Node::RenderPass pass)
+    {
+        glEnable(GL_CULL_FACE);
+
+        MeshNode::Render(pass);
+
+        glDisable(GL_CULL_FACE);
+    }
+
 }
