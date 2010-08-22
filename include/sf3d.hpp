@@ -10,6 +10,7 @@
 #include <sf3d/Scene.hpp>
 
 #include <sf3d/FpsCamera.hpp>
+#include <sf3d/MeshLoader.hpp>
 #include <sf3d/MD2MeshLoader.hpp>
 #include <sf3d/OBJMeshLoader.hpp>
 

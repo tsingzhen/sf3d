@@ -55,6 +55,11 @@ namespace sf3d
                 return std::sqrt(vect.x * vect.x + vect.y * vect.y + vect.z * vect.z);
             }
 
+            static float    Vect_GetLengthSq(const sf::Vector3f& vect)
+            {
+                return vect.x * vect.x + vect.y * vect.y + vect.z * vect.z;
+            }
+
             static float    Vect_DotProduct(const sf::Vector3f& v1, const sf::Vector3f& v2)
             {
                 return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;

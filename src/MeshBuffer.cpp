@@ -173,6 +173,40 @@ namespace sf3d
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize * sizeof(sf::Uint32), 0, GL_STREAM_DRAW);
 
         ComputeNormals();
+        ComputeBoundingSphere();
         Update();
+    }
+
+    void    MeshBuffer::ComputeBoundingSphere()
+    {
+        myBoundingSphere.center = sf::Vector3f(0, 0, 0);
+        for (Vertices::const_iterator it = myVertices.begin(); it != myVertices.end(); ++it)
+        {
+            const Vertex& v = *it;
+            myBoundingSphere.center += v.pos;
+        }
+
+        float size = static_cast<float>(myVertices.size());
+        myBoundingSphere.center = sf::Vector3f(myBoundingSphere.center.x / size,
+                                               myBoundingSphere.center.y / size,
+                                               myBoundingSphere.center.z / size);
+
+        myBoundingSphere.radius = 0;
+        for (Vertices::const_iterator it = myVertices.begin(); it != myVertices.end(); ++it)
+        {
+            const Vertex& v = *it;
+            sf::Vector3f vdist = v.pos - myBoundingSphere.center;
+            float distSq = Utils::Vect_GetLengthSq(vdist);
+
+            if (distSq > myBoundingSphere.radius)
+                myBoundingSphere.radius = distSq;
+        }
+
+        myBoundingSphere.radius = std::sqrt(myBoundingSphere.radius);
+    }
+
+    const MeshBuffer::BoundingSphere& MeshBuffer::GetBoundingSphere() const
+    {
+        return myBoundingSphere;
     }
 }

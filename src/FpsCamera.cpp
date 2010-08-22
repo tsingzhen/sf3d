@@ -76,6 +76,10 @@ namespace sf3d
     {
         sf::RenderWindow* win = Renderer::GetSingleton().GetWindow();
 
+        Camera::Render(pass);
+
+        myClock.Reset();
+
         if (win->GetInput().IsKeyDown(sf::Key::Left))
             GotoLeft();
 
@@ -98,15 +102,5 @@ namespace sf3d
             Move(sf::Vector3f(0, 1, 0));
         else if (win->GetInput().IsKeyDown(sf::Key::PageUp))
             Move(sf::Vector3f(0, -1, 0));
-
-
-/*
-        static sf::Vector2i lastPos;
-        sf::Vector2i mousePos(win->GetInput().GetMouseX(), win->GetInput().GetMouseY());
-        sf::Vector2i diff = mousePos - lastPos;
-        lastPos = mousePos;
-        SetRotation(sf::Vector3f(GetRotation().x + diff.y, GetRotation().y + diff.x, GetRotation().z));
-*/
-        Camera::Render(pass);
     }
 }

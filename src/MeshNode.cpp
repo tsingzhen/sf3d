@@ -15,6 +15,10 @@ namespace sf3d
     {
     }
 
+    void        MeshNode::SetMeshBuffer(MeshBuffer* mb)
+    {
+        myMeshBuffer = mb;
+    }
 
     MeshBuffer* MeshNode::GetMeshBuffer() const
     {
@@ -59,6 +63,7 @@ namespace sf3d
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
 
         RenderChildren(pass);
 

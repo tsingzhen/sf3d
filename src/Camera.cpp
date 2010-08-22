@@ -99,14 +99,13 @@ namespace sf3d
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-
         gluPerspective(myFOV, myAspectRatio, myNearValue, myFarValue);
 
-
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
         glRotatef(myRotation.x, 1, 0, 0);
         glRotatef(myRotation.y, 0, 1, 0);
         glRotatef(myRotation.z, 0, 0, 1);
         glTranslatef(myPosition.x, myPosition.y, myPosition.z);
-
     }
 }

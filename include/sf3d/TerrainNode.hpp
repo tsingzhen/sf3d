@@ -17,6 +17,8 @@ namespace sf3d
 
             void            Compute();
 
+            virtual void    Render(Node::RenderPass pass);
+
         private:
             float           GetPointHeight(sf::Uint32 pointX, sf::Uint32 pointY);
 

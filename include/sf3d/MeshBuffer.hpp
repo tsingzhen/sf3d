@@ -40,6 +40,12 @@ namespace sf3d
                 INDEX_BUFFER
             }   BufferType;
 
+            typedef struct
+            {
+                float           radius;
+                sf::Vector3f    center;
+            }   BoundingSphere;
+
             typedef std::vector<Triangle>       Triangles;
             typedef std::vector<Vertex>         Vertices;
             typedef std::vector<sf::Vector3f>   Normals;
@@ -53,9 +59,12 @@ namespace sf3d
             Vertices&       GetVertices();
             Normals&        GetNormals();
 
+            const BoundingSphere&   GetBoundingSphere() const;
+
             void            Allocate();
             void            Update();
             void            ComputeNormals();
+            void            ComputeBoundingSphere();
 
             void            Use(BufferType type);
 
@@ -63,6 +72,8 @@ namespace sf3d
             Triangles       myTriangles;
             Vertices        myVertices;
             Normals         myNormals;
+
+            BoundingSphere  myBoundingSphere;
 
             GLuint          myVertexBufferID;
             GLuint          myNormalBufferID;

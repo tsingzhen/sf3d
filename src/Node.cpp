@@ -219,22 +219,23 @@ namespace sf3d
 
             glEnable(GL_LIGHT0 + i);
 
-            const Material& mat = Material::Get(l->GetMaterial());
+            const sf::Color& ambientColor = l->GetAmbientColor();
+            GLfloat ambient[] = { static_cast<GLfloat>(ambientColor.r) / 255.f,
+                                  static_cast<GLfloat>(ambientColor.g) / 255.f,
+                                  static_cast<GLfloat>(ambientColor.b) / 255.f,
+                                  static_cast<GLfloat>(ambientColor.a) / 255.f };
 
-            GLfloat ambient[] = { static_cast<GLfloat>(mat.ambientColor.r) / 255.f,
-                                  static_cast<GLfloat>(mat.ambientColor.g) / 255.f,
-                                  static_cast<GLfloat>(mat.ambientColor.b) / 255.f,
-                                  static_cast<GLfloat>(mat.ambientColor.a) / 255.f };
+            const sf::Color& diffuseColor = l->GetDiffuseColor();
+            GLfloat diffuse[] = { static_cast<GLfloat>(diffuseColor.r) / 255.f,
+                                  static_cast<GLfloat>(diffuseColor.g) / 255.f,
+                                  static_cast<GLfloat>(diffuseColor.b) / 255.f,
+                                  static_cast<GLfloat>(diffuseColor.a) / 255.f };
 
-            GLfloat diffuse[] = { static_cast<GLfloat>(mat.diffuseColor.r) / 255.f,
-                                  static_cast<GLfloat>(mat.diffuseColor.g) / 255.f,
-                                  static_cast<GLfloat>(mat.diffuseColor.b) / 255.f,
-                                  static_cast<GLfloat>(mat.diffuseColor.a) / 255.f };
-
-            GLfloat specular[] = { static_cast<GLfloat>(mat.specularColor.r) / 255.f,
-                                   static_cast<GLfloat>(mat.specularColor.g) / 255.f,
-                                   static_cast<GLfloat>(mat.specularColor.b) / 255.f,
-                                   static_cast<GLfloat>(mat.specularColor.a) / 255.f };
+            const sf::Color& specularColor = l->GetSpecularColor();
+            GLfloat specular[] = { static_cast<GLfloat>(specularColor.r) / 255.f,
+                                   static_cast<GLfloat>(specularColor.g) / 255.f,
+                                   static_cast<GLfloat>(specularColor.b) / 255.f,
+                                   static_cast<GLfloat>(specularColor.a) / 255.f };
 
             const sf::Vector3f& pos = l->GetPosition();
             GLfloat position[] = { pos.x, pos.y, pos.z, 0.f };
@@ -262,10 +263,6 @@ namespace sf3d
 
         // Don't draw reflective nodes
         if (pass == PASS_REFLECTION_2 && mat.reflectiveMode == Material::REFLECTION_MIRROR)
-            return false;
-
-
-        if (pass == PASS_NON_REFRACTIVE && mat.refractive == true)
             return false;
 
         return true;
